@@ -1,0 +1,26 @@
+[workspace]
+resolver = "2"
+members = [
+    "core",
+    "macros",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+authors = ["rdcm@protonmail.ch"]
+license = "MIT"
+repository = "https://github.com/rdcm/clickhouse-testing"
+rust-version = "1.87.0"
+
+
+[workspace.dependencies]
+dotenvy = "0.15.7"
+futures = "0.3.31"
+serde = { version = "1.0.219", features = ["derive"] }
+syn = { version = "2.0.106", features = ["full"] }
+quote = "1.0.40"
+tokio = { version = "1.47.1", features = ["macros", "rt-multi-thread"] }
+clickhouse = "0.13.3"
+clickhouse-testing = { path = "core" }
+clickhouse-testing-macros = { path = "macros" }

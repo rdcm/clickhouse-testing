@@ -1,0 +1,16 @@
+[package]
+name = "clickhouse-testing"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+
+[dependencies]
+dotenvy = { workspace = true }
+futures = { workspace = true }
+clickhouse = { workspace = true }
+clickhouse-testing-macros = { workspace = true }
+serde = { workspace = true }
+
+[dev-dependencies]
+clickhouse-testing = { path = "." }
+tokio = { workspace = true }
