@@ -77,7 +77,7 @@ async fn apply_migrations(client: &Client) -> Result<(), Error> {
         let script_parts: Vec<&str> = script.split(';').filter(|s| !s.trim().is_empty()).collect();
 
         for script_part in script_parts {
-            client.query(&script_part).execute().await?;
+            client.query(script_part).execute().await?;
         }
     }
 

@@ -10,10 +10,12 @@ version = "0.1.0"
 edition = "2024"
 authors = ["rdcm@protonmail.ch"]
 license = "MIT"
+readme = "README.md"
+keywords = ["clickhouse", "testing", "database"]
 repository = "https://github.com/rdcm/clickhouse-testing"
-rust-version = "1.87.0"
+rust-version = "1.86.0"
 description = "A crate that simplifies writing integration tests for ClickHouse, inspired by sqlx."
-
+categories = ["development-tools::testing", "database"]
 
 [workspace.dependencies]
 dotenvy = "0.15.7"
@@ -24,4 +26,4 @@ quote = "1.0.40"
 tokio = { version = "1.47.1", features = ["macros", "rt-multi-thread"] }
 clickhouse = "0.13.3"
 clickhouse-testing = { path = "core" }
-clickhouse-testing-macros = { path = "macros" }
+clickhouse-testing-macros = { path = "macros", version = "0.1.0" }

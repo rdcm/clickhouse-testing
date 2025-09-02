@@ -13,5 +13,11 @@ env-up:
 env-down:
 	docker compose down
 
+doc:
+	cargo doc --no-deps
+
+publish:
+	cargo publish --dry-run
+
 test:
 	cargo test
