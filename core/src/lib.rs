@@ -35,13 +35,13 @@ impl From<clickhouse::error::Error> for Error {
     }
 }
 
-pub async fn init_test(test_name: &str) -> Result<Client, Error> {
+pub async fn init_test(module_path: &str, test_name: &str) -> Result<Client, Error> {
     _ = dotenv();
 
     let config = read_clickhouse_config();
     let client = create_client(&config);
     let databases = get_dbs_list(&client).await?;
-    let db_name = next_db_version(&databases, test_name);
+    let db_name = next_db_version(&databases, module_path, test_name);
 
     create_database(&client, &db_name).await?;
 
@@ -71,8 +71,14 @@ async fn apply_migrations(client: &Client) -> Result<(), Error> {
     sql_files.sort();
 
     for file in sql_files {
-        let sql = fs::read_to_string(&file)?;
-        client.query(&sql).execute().await?;
+        let script = fs::read_to_string(&file)?;
+
+        // For avoiding "Multi-statements are not allowed" error
+        let script_parts: Vec<&str> = script.split(';').filter(|s| !s.trim().is_empty()).collect();
+
+        for script_part in script_parts {
+            client.query(&script_part).execute().await?;
+        }
     }
 
     Ok(())
@@ -142,8 +148,8 @@ async fn drop_db(client: &Client, database: &Database) -> Result<(), Error> {
     Ok(())
 }
 
-fn next_db_version(tests_dbs: &[Database], test_name: &str) -> String {
-    let current_test_db = format!("test_db_{test_name}_");
+fn next_db_version(tests_dbs: &[Database], module_path: &str, test_name: &str) -> String {
+    let current_test_db = format!("test_db_{module_path}_{test_name}_");
 
     let db_version = tests_dbs
         .iter()

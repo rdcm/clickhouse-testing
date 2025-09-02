@@ -21,7 +21,8 @@ pub fn test(_args: TokenStream, input: TokenStream) -> TokenStream {
         #func_vis async fn #func_name() {
             use futures::FutureExt;
 
-            let client = match clickhouse_testing::init_test(#func_name_str).await {
+            let module_path = module_path!();
+            let client = match clickhouse_testing::init_test(module_path, #func_name_str).await {
                 Ok(c) => c,
                 Err(e) => panic!("Failed to setup test {:?} client: {:?}", #func_name_str, e),
             };
