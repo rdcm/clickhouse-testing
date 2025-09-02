@@ -3,6 +3,7 @@ name = "clickhouse-testing-macros"
 version = { workspace = true }
 edition = { workspace = true }
 authors = { workspace = true }
+description = { workspace = true }
 
 [lib]
 proc-macro = true

@@ -12,6 +12,7 @@ authors = ["rdcm@protonmail.ch"]
 license = "MIT"
 repository = "https://github.com/rdcm/clickhouse-testing"
 rust-version = "1.87.0"
+description = "A crate that simplifies writing integration tests for ClickHouse, inspired by sqlx."
 
 
 [workspace.dependencies]

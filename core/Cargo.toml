@@ -3,6 +3,7 @@ name = "clickhouse-testing"
 version = { workspace = true }
 edition = { workspace = true }
 authors = { workspace = true }
+description = { workspace = true }
 
 [dependencies]
 dotenvy = { workspace = true }
