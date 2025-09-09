@@ -13,7 +13,6 @@ categories = { workspace = true }
 
 [dependencies]
 dotenvy = { workspace = true }
-futures = { workspace = true }
 clickhouse = { workspace = true }
 clickhouse-testing-macros = { workspace = true }
 serde = { workspace = true }

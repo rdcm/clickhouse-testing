@@ -116,7 +116,6 @@ dependencies = [
  "clickhouse-testing",
  "clickhouse-testing-macros",
  "dotenvy",
- "futures",
  "serde",
  "tokio",
 ]
