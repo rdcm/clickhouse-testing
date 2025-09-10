@@ -6,7 +6,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = ["rdcm@protonmail.ch"]
 license = "MIT"
@@ -25,4 +25,4 @@ quote = "1.0.40"
 tokio = { version = "1.47.1", features = ["macros", "rt-multi-thread"] }
 clickhouse = "0.13.3"
 clickhouse-testing = { path = "core" }
-clickhouse-testing-macros = { path = "macros", version = "0.1.0" }
+clickhouse-testing-macros = { path = "macros", version = "0.1.1" }
