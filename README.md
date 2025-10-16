@@ -29,7 +29,7 @@ async fn test1(client: clickhouse_testing::Client) {
 }
 ```
 
-# Guaranties
+# Behavior
 
 - Each test creates a unique database in the ClickHouse instance. Unique key: `{module_name}` + `{test_name}` + `{run_id}`.
 - Before each test, the new schema is applied to `"test_db"`.
