@@ -20,3 +20,4 @@ serde = { workspace = true }
 [dev-dependencies]
 clickhouse-testing = { path = "." }
 tokio = { workspace = true }
+rstest = { workspace = true }
