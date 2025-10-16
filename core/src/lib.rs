@@ -148,8 +148,18 @@ async fn drop_db(client: &Client, database: &Database) -> Result<(), Error> {
     Ok(())
 }
 
+fn sanitize_name(name: &str) -> String {
+    name.replace("::", "_")
+        .replace("-", "_")
+        .replace(":", "_")
+        .trim_matches('_')
+        .to_lowercase()
+}
+
 fn next_db_version(tests_dbs: &[Database], module_path: &str, test_name: &str) -> String {
-    let current_test_db = format!("test_db_{module_path}_{test_name}_");
+    let sanitized_module = sanitize_name(module_path);
+    let sanitized_test = sanitize_name(test_name);
+    let current_test_db = format!("test_db_{sanitized_module}_{sanitized_test}_");
 
     let db_version = tests_dbs
         .iter()
@@ -165,7 +175,6 @@ fn next_db_version(tests_dbs: &[Database], module_path: &str, test_name: &str) -
 
     format!("{current_test_db}{db_version}")
 }
-
 #[derive(Debug, Deserialize, Row)]
 struct Database {
     name: String,
