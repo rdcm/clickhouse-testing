@@ -13,7 +13,7 @@ license = "MIT"
 readme = "README.md"
 keywords = ["clickhouse", "testing", "database"]
 repository = "https://github.com/rdcm/clickhouse-testing"
-rust-version = "1.92.0"
+rust-version = "1.99.0"
 description = "A crate that simplifies writing integration tests for ClickHouse, inspired by sqlx."
 categories = ["development-tools::testing", "database"]
 
