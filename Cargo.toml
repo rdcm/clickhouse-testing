@@ -25,5 +25,5 @@ quote = "1.0.47"
 tokio = { version = "1.53.3", features = ["macros", "rt-multi-thread"] }
 clickhouse = "0.15.3"
 clickhouse-testing = { path = "core" }
-clickhouse-testing-macros = { path = "macros", version = "0.1.3" }
+clickhouse-testing-macros = { path = "macros", version = "0.1.4" }
 rstest = "0.27.0"
