@@ -36,17 +36,29 @@ impl From<clickhouse::error::Error> for Error {
 }
 
 pub async fn init_test(module_path: &str, test_name: &str) -> Result<Client, Error> {
-    _ = dotenv();
+    let (config, migrations_path) = if let Some(path) = env::var_os("CONFIG_PATH") {
+        read_file_config(PathBuf::from(path))?
+    } else {
+        _ = dotenv();
+        (read_clickhouse_config(), env::var("MIGRATIONS_DIR")?)
+    };
+    init_test_with_config(module_path, test_name, &config, &migrations_path).await
+}
 
-    let config = read_clickhouse_config();
-    let client = create_client(&config);
+async fn init_test_with_config(
+    module_path: &str,
+    test_name: &str,
+    config: &ClickhouseConfig,
+    migrations_path: &str,
+) -> Result<Client, Error> {
+    let client = create_client(config);
     let databases = get_dbs_list(&client).await?;
     let db_name = next_db_version(&databases, module_path, test_name);
 
     create_database(&client, &db_name).await?;
 
     let test_client = client.with_database(db_name);
-    apply_migrations(&test_client).await?;
+    apply_migrations(&test_client, migrations_path).await?;
 
     Ok(test_client)
 }
@@ -58,8 +70,7 @@ pub async fn cleanup_test(client: &Client) -> Result<(), Error> {
     Ok(())
 }
 
-async fn apply_migrations(client: &Client) -> Result<(), Error> {
-    let migrations_path = env::var("MIGRATIONS_DIR")?;
+async fn apply_migrations(client: &Client, migrations_path: &str) -> Result<(), Error> {
     let project_root = get_project_root()?;
 
     let mut sql_files: Vec<_> = read_dir(project_root.join(migrations_path))?
@@ -111,6 +122,62 @@ fn read_clickhouse_config() -> ClickhouseConfig {
         db: env::var("CLICKHOUSE_DB").unwrap_or("default".into()),
         user: env::var("CLICKHOUSE_USER").unwrap_or("default".into()),
         password: env::var("CLICKHOUSE_PASSWORD").unwrap_or("".into()),
+    }
+}
+
+fn read_file_config(path: PathBuf) -> Result<(ClickhouseConfig, String), Error> {
+    let contents = fs::read(&path)?;
+    let file: FileConfig = serde_json::from_slice(&contents).map_err(|error| {
+        io::Error::new(
+            ErrorKind::InvalidData,
+            format!("invalid test configuration {}: {error}", path.display()),
+        )
+    })?;
+    Ok(file.with_overrides(|name| env::var(name).ok()))
+}
+
+#[derive(Deserialize)]
+struct FileConfig {
+    db: ClickhouseConfig,
+    migration_source: String,
+}
+
+impl FileConfig {
+    fn with_overrides(self, get_var: impl Fn(&str) -> Option<String>) -> (ClickhouseConfig, String) {
+        (
+            ClickhouseConfig {
+                url: get_var("CLICKHOUSE_URL").unwrap_or(self.db.url),
+                db: get_var("CLICKHOUSE_DB").unwrap_or(self.db.db),
+                user: get_var("CLICKHOUSE_USER").unwrap_or(self.db.user),
+                password: get_var("CLICKHOUSE_PASSWORD").unwrap_or(self.db.password),
+            },
+            get_var("MIGRATIONS_DIR").unwrap_or(self.migration_source),
+        )
+    }
+}
+
+#[cfg(test)]
+mod config_tests {
+    use super::FileConfig;
+
+    #[test]
+    fn json_config_uses_environment_overrides() {
+        let file: FileConfig = serde_json::from_str(
+            r#"{"db":{"url":"http://file:8123","db":"file_db","user":"file_user","password":"file_password"},"migration_source":"file_migrations","mongo":{"db":"ignored"}}"#,
+        )
+        .unwrap();
+
+        let (db, migrations) = file.with_overrides(|name| match name {
+            "CLICKHOUSE_URL" => Some("http://env:8123".into()),
+            "MIGRATIONS_DIR" => Some("env_migrations".into()),
+            _ => None,
+        });
+
+        assert_eq!(db.url, "http://env:8123");
+        assert_eq!(db.db, "file_db");
+        assert_eq!(db.user, "file_user");
+        assert_eq!(db.password, "file_password");
+        assert_eq!(migrations, "env_migrations");
     }
 }
 
@@ -180,7 +247,7 @@ struct Database {
     name: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
 struct ClickhouseConfig {
     url: String,
     db: String,

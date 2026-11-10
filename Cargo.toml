@@ -6,7 +6,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.1.4"
+version = "0.1.5"
 edition = "2024"
 authors = ["rdcm@protonmail.ch"]
 license = "MIT"
@@ -20,10 +20,11 @@ categories = ["development-tools::testing", "database"]
 [workspace.dependencies]
 dotenvy = "0.15.7"
 serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0"
 syn = { version = "3.0.9", features = ["full"] }
 quote = "1.0.47"
 tokio = { version = "1.53.3", features = ["macros", "rt-multi-thread"] }
 clickhouse = "0.15.3"
 clickhouse-testing = { path = "core" }
-clickhouse-testing-macros = { path = "macros", version = "0.1.4" }
+clickhouse-testing-macros = { path = "macros", version = "0.1.5" }
 rstest = "0.27.0"

@@ -114,7 +114,7 @@ dependencies = [
 
 [[package]]
 name = "clickhouse-testing"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "clickhouse",
  "clickhouse-testing",
@@ -122,12 +122,13 @@ dependencies = [
  "dotenvy",
  "rstest",
  "serde",
+ "serde_json",
  "tokio",
 ]
 
 [[package]]
 name = "clickhouse-testing-macros"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "quote",
  "syn 3.0.9",

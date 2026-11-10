@@ -4,7 +4,27 @@ A crate that simplifies writing integration tests for ClickHouse, inspired by sq
 
 # Getting Started
 
-Add the following environment variables to a `.env` file:
+Set `CONFIG_PATH` to a JSON file (relative to the test package directory):
+
+```json
+{
+  "db": {
+    "url": "http://localhost:8123",
+    "db": "db",
+    "user": "user",
+    "password": "password"
+  },
+  "migration_source": ".migrations"
+}
+```
+
+For example, run `CONFIG_PATH=../../config/test/migrator.json cargo test`.
+`CLICKHOUSE_URL`, `CLICKHOUSE_DB`, `CLICKHOUSE_USER`, `CLICKHOUSE_PASSWORD`, and
+`MIGRATIONS_DIR` override the corresponding JSON values when set. A missing or
+invalid `CONFIG_PATH` file fails test setup without falling back to `.env`.
+
+Without `CONFIG_PATH`, the library retains its original `.env` behavior. Set
+the following variables there:
 
 ```bash
 MIGRATIONS_DIR=".migrations"
